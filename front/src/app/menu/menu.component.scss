@@ -1,0 +1,55 @@
+:host {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .layouts {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: flex-start;
+        align-items: center;
+        button {
+            &:not(.actived) {
+                mat-icon {
+                    text-shadow: none;
+                }
+            }
+        }
+    }
+    @media screen and (orientation: portrait) {
+        flex-direction: row;
+        min-width: 0;
+        .layouts {
+            height: 100%;
+            border-left: 1px solid var(--primary);
+            min-width: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-direction: row;
+        }
+    }
+    @media screen and (orientation: landscape) {
+        flex-direction: column;
+        min-height: 0;
+        .layouts {
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border-top: 1px solid var(--primary);
+            min-height: 0;
+            flex-direction: column;
+        }
+    }
+    .mat-primary {
+        mat-icon {
+            text-shadow: var(--text-shadow);
+        }
+    }
+    .mat-accent {
+        mat-icon {
+            text-shadow: var(--text-shadow-accent);
+        }
+    }
+    button {
+        flex-shrink: 0;
+    }
+}

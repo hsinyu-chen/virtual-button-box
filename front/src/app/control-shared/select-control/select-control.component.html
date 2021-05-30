@@ -1,0 +1,7 @@
+<div class="view" *ngFor="let c of controls" (click)="openSetting(c)">
+    <ng-container *ngComponentOutlet="c.componentType;injector:injector"></ng-container>
+</div>
+
+<button mat-icon-button color="warn" class="close" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+</button>

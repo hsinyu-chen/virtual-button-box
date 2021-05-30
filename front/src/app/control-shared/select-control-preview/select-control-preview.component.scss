@@ -1,0 +1,45 @@
+:host {
+    height: 100%;
+    .preview {
+        display: flex;
+        @media screen and (orientation: portrait) {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        @media screen and (orientation: landscape) {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        > .container {
+            flex: 1 1 auto;
+            display: flex;
+            &.setting {
+                padding: 10px;
+                &::ng-deep {
+                    > * {
+                        flex: 1;
+                    }
+                }
+            }
+            &.view {
+                &::ng-deep {
+                    > * {
+                        max-height: 50vh;
+                    }
+                }
+            }
+        }
+    }
+    display: flex;
+    flex-direction: column;
+    .row {
+        margin-top: auto;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: flex-end;
+        > button {
+            margin: 0 10px;
+        }
+    }
+}

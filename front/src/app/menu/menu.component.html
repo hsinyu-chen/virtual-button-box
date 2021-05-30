@@ -1,0 +1,18 @@
+<button color="primary" mat-icon-button (click)="toggleFullscreen()">
+    <mat-icon>fullscreen</mat-icon>
+</button>
+
+<button color="primary" [routerLink]="['/']" mat-icon-button>
+    <mat-icon>settings</mat-icon>
+</button>
+
+<button color="accent" (click)="newCanvas()" mat-icon-button>
+    <mat-icon>add</mat-icon>
+</button>
+<div class="layouts">
+    <button #active="routerLinkActive" routerLinkActive="actived" [color]="active.isActive?'accent':'primary'"
+        [routerLink]="['/layout',l.id]" mat-icon-button *ngFor="let l of app.settings.layouts">
+        <mat-icon>{{l.icon}}</mat-icon>
+    </button>
+
+</div>

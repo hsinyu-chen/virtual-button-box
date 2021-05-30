@@ -1,0 +1,44 @@
+:host {
+    display: flex;
+    flex: 1 1 100%;
+
+    @media screen and (orientation: portrait) {
+        flex-direction: column;
+    }
+    @media screen and (orientation: landscape) {
+        flex-direction: row;
+    }
+    .d {
+        @media screen and (orientation: portrait) {
+            width: 100%;
+            height: 10px;
+        }
+        @media screen and (orientation: landscape) {
+            height: 100%;
+            width: 10px;
+        }
+    }
+}
+app-menu {
+    box-shadow: var(--shadow);
+    @media screen and (orientation: portrait) {
+        width: 100%;
+        height: 50px;
+        border-bottom: var(--border);
+    }
+    @media screen and (orientation: landscape) {
+        border-right: var(--border);
+        height: 100%;
+        width: 50px;
+    }
+}
+:host {
+    opacity: 0.1;
+    transition: opacity 0.3s linear;
+    &.active {
+        opacity: 1;
+    }
+    router-outlet + * {
+        flex: 1 1 100%;
+    }
+}

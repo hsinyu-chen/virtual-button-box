@@ -1,0 +1,50 @@
+<mat-tab-group color="primary">
+    <mat-tab label="VJoy Device" color="primary">
+        <div class="device-tab">
+            <ng-container *ngIf="message">
+                <div class="message">{{message}}</div>
+            </ng-container>
+            <h1>
+                <span>VJoy Devices (check device to add button/axis capacity)</span>
+            </h1>
+            <h1>Button Available:{{maxButton}} , Axes Available:{{maxAxis}} , POV Available:{{maxPov}}</h1>
+            <div class="legend">
+                <div>
+                    <mat-icon color="warn">close</mat-icon><span>:Remove device</span>
+                </div>
+                <div>
+                    <mat-icon color="accent">add</mat-icon><span>:Create device</span>
+                </div>
+                <div>
+                    <mat-icon color="accent">refresh</mat-icon><span>:Re-create device</span>
+                </div>
+            </div>
+            <ng-container *ngIf="devices&&devices.length">
+                <div class="devices">
+                    <div *ngFor="let device of devices" class="device">
+                        <button mat-icon-button (click)="del(device.id)"
+                            *ngIf="device.id!=1 && device.status!='MISSING'">
+                            <mat-icon color="warn">close</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="create(device.id)"
+                            *ngIf="device.status=='MISSING' || device.id==1">
+                            <mat-icon color="accent">{{device.id==1?'refresh':'add'}}</mat-icon>
+                        </button>
+                        <mat-checkbox [disabled]="loading" (change)="setDeviceUse(device.id,!device.used)"
+                            [checked]="device.used">
+                        </mat-checkbox>
+                        <span class="name">{{device.name}}</span>
+                        <span>{{device.status}}</span>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </mat-tab>
+    <mat-tab label="MISC" color="primary">
+        <mat-checkbox [(ngModel)]="app.settings.oledProtect">OLED Protection</mat-checkbox>
+    </mat-tab>
+</mat-tab-group>
+
+<div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+</div>

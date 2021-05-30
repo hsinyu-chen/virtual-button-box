@@ -1,0 +1,59 @@
+<svg viewBox="0 0 300 300">
+    <defs>
+        <filter id="neon-primary">
+            <feFlood flood-color="#64dd17" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="neon-accent">
+            <feFlood flood-color="#ff9100" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="neon-warn">
+            <feFlood flood-color="#f44336" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+    <g>
+        <rect [class.press]="press" [attr.color]="setting.color" x="20" y="20" width="260" height="260" rx="5"
+            class="border">
+        </rect>
+        <ng-container *ngIf="!setting.text2">
+            <text [class.press]="press" [attr.color]="setting.color" x="150" y="150" alignment-baseline="middle"
+                letter-spacing="10" font-size="80" text-anchor="middle">{{setting.text}}</text>
+        </ng-container>
+        <ng-container *ngIf="setting.text2">
+            <text [class.press]="press" [attr.color]="setting.color" x="150" y="100" alignment-baseline="middle"
+                letter-spacing="10" font-size="80" text-anchor="middle">{{setting.text}}</text>
+            <text [class.press]="press" [attr.color]="setting.color" x="150" y="200" alignment-baseline="middle"
+                letter-spacing="10" font-size="80" text-anchor="middle">{{setting.text2}}</text>
+        </ng-container>
+        <rect [class.press]="press" [attr.color]="setting.color" x="20" y="20" width="260" height="260" rx="5"
+            class="cap">
+        </rect>
+    </g>
+
+</svg>

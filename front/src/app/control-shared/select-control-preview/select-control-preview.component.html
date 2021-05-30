@@ -1,0 +1,13 @@
+<div class="preview">
+    <div class="container view">
+        <ng-container *ngComponentOutlet="data.def.componentType;injector:injector"></ng-container>
+
+    </div>
+    <div class="container setting">
+        <ng-container *ngComponentOutlet="data.def.settingComponentType;injector:injector"></ng-container>
+    </div>
+</div>
+<div class="row">
+    <button mat-stroked-button color="warn" mat-dialog-close>Cancel</button>
+    <button mat-stroked-button color="primary" [mat-dialog-close]="getData()">OK</button>
+</div>

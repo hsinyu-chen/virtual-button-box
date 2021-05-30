@@ -1,0 +1,67 @@
+<ng-container *ngIf="layout">
+    <div class="controls">
+        <button mat-icon-button color="primary" *ngIf="!editing" (click)="editing=true">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" *ngIf="editing" (click)="editing=false;clear()">
+            <mat-icon>block</mat-icon>
+        </button>
+        <div class="tool">
+            <mat-select *ngIf="editing" [(ngModel)]="layout.icon" (selectionChange)="app.saveChanges()">
+                <mat-select-trigger>
+                    <mat-icon color="primary">{{layout.icon}}</mat-icon>
+                </mat-select-trigger>
+                <mat-option *ngFor="let i of icons" [value]="i">
+                    <mat-icon color="primary">{{i}}</mat-icon>
+                </mat-option>
+            </mat-select>
+            <button mat-icon-button color="accent" *ngIf="editing" (click)="add()">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" [disabled]="!selected || !checked().length" *ngIf="editing"
+                (click)="setSize()">
+                <mat-icon>flip_to_front</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" [disabled]="!selected|| !checked().length" *ngIf="editing"
+                (click)="align('y')">
+                <mat-icon>align_vertical_top</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" [disabled]="!selected|| !checked().length" *ngIf="editing"
+                (click)="align('x')">
+                <mat-icon>align_horizontal_left</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" [disabled]="!selected|| !checked().length" *ngIf="editing"
+                (click)="clear()">
+                <mat-icon>clear</mat-icon>
+            </button>
+
+        </div>
+
+        <button mat-icon-button color="warn" *ngIf="editing" (click)="deleteLayout()">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+    <div class="panel">
+        <div class="wrap" *ngFor="let ic of injectedControls" [style.left]="ic.control.x+'%'"
+            [style.top]="ic.control.y+'%'" [style.width]="ic.control.width+'%'" [style.height]="ic.control.height+'%'">
+            <div class="control">
+                <ng-container *ngComponentOutlet="map[ic.control.type].componentType;injector:ic.injector">
+                </ng-container>
+            </div>
+            <ng-container *ngIf="editing">
+                <div class="e zoom" (click)="selected=ic.control" [class.selected]="selected==ic.control">
+                    <mat-icon (touchstart)="zoom(ic.control,$event)">zoom_out_map</mat-icon>
+                </div>
+                <div class="e move">
+                    <mat-icon (touchstart)="move(ic.control,$event)">open_with</mat-icon>
+                </div>
+                <div class="e check">
+                    <mat-checkbox [(ngModel)]="ic.checked"></mat-checkbox>
+                </div>
+                <div class="e edit">
+                    <mat-icon (click)="openSetting(ic.control)">tune</mat-icon>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>

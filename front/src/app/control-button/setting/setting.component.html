@@ -1,0 +1,27 @@
+<div class="row">
+    <span class="label">Color</span>
+    <mat-radio-group [(ngModel)]="setting.color">
+        <mat-radio-button value="primary">
+            <span>Green</span>
+        </mat-radio-button>
+        <mat-radio-button value="accent">
+            <span>Orange</span>
+        </mat-radio-button>
+        <mat-radio-button value="warn">
+            <span>Red</span>
+        </mat-radio-button>
+    </mat-radio-group>
+</div>
+<div class="row">
+    <mat-form-field>
+        <label>Text</label>
+        <input matInput [(ngModel)]="setting.text" inputmode="latin" type="tel" maxlength="4" />
+    </mat-form-field>
+    <mat-form-field>
+        <label>Text 2</label>
+        <input matInput [(ngModel)]="setting.text2" inputmode="latin" type="tel" maxlength="4" />
+    </mat-form-field>
+</div>
+<div class="row">
+
+</div>

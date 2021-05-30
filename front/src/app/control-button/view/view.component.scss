@@ -1,0 +1,66 @@
+:host {
+    user-select: none;
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+    @mixin color() {
+        filter: url(#neon-primary);
+        stroke: var(--primary);
+        &[color="accent"] {
+            filter: url(#neon-accent);
+            stroke: var(--accent);
+        }
+        &[color="warn"] {
+            filter: url(#neon-warn);
+            stroke: var(--warn);
+        }
+    }
+    @mixin fill() {
+        fill: var(--primary);
+        &[color="accent"] {
+            fill: var(--accent);
+        }
+        &[color="warn"] {
+            fill: var(--warn);
+        }
+    }
+    svg {
+        flex: 1 1 auto;
+        .border {
+            stroke-width: 10;
+            fill: transparent;
+            @include color();
+            &.press {
+                stroke-width: 6;
+                filter: none;
+            }
+        }
+        .cap {
+            fill: var(--primary01);
+            &[color="accent"] {
+                fill: var(--accent01);
+            }
+            &[color="warn"] {
+                fill: var(--warn01);
+            }
+            &.press {
+                fill: var(--primary005);
+                &[color="accent"] {
+                    fill: var(--accent005);
+                }
+                &[color="warn"] {
+                    fill: var(--warn005);
+                }
+            }
+        }
+        text {
+            stroke-width: 5;
+            @include color();
+            @include fill();
+            &.press {
+                filter: none;
+                stroke-width: 2;
+            }
+        }
+    }
+}
