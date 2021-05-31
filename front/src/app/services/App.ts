@@ -6,6 +6,7 @@ import { Layout } from "../models/Layout";
 export class AppSettings {
     oledProtect = true;
     layouts: Layout[] = []
+    enableVibrate = true;
 }
 @Injectable({
     providedIn: 'root'

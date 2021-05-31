@@ -11,6 +11,7 @@ import { SelectControlPreviewComponent } from './select-control-preview/select-c
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { HelpComponent } from './help/help.component';
 
 
 
@@ -18,7 +19,8 @@ import { MatSelectModule } from '@angular/material/select';
   declarations: [
     LayoutComponent,
     SelectControlComponent,
-    SelectControlPreviewComponent
+    SelectControlPreviewComponent,
+    HelpComponent
   ],
   imports: [
     CommonModule,

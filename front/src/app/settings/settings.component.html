@@ -41,7 +41,10 @@
         </div>
     </mat-tab>
     <mat-tab label="MISC" color="primary">
-        <mat-checkbox [(ngModel)]="app.settings.oledProtect">OLED Protection</mat-checkbox>
+        <div class="list">
+            <mat-checkbox [(ngModel)]="app.settings.oledProtect">OLED Protection</mat-checkbox>
+            <mat-checkbox [(ngModel)]="app.settings.enableVibrate">Enable Vibrate</mat-checkbox>
+        </div>
     </mat-tab>
 </mat-tab-group>
 

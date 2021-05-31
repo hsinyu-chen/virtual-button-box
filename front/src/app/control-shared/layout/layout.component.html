@@ -30,15 +30,27 @@
                 (click)="align('x')">
                 <mat-icon>align_horizontal_left</mat-icon>
             </button>
+            <button mat-icon-button color="primary" [disabled]="checked().length<3" *ngIf="editing" (click)="evenW()">
+                <mat-icon>horizontal_distribute</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" [disabled]="checked().length<3" *ngIf="editing" (click)="evenH()">
+                <mat-icon>vertical_distribute</mat-icon>
+            </button>
             <button mat-icon-button color="accent" [disabled]="!selected|| !checked().length" *ngIf="editing"
                 (click)="clear()">
-                <mat-icon>clear</mat-icon>
+                <mat-icon>remove_done</mat-icon>
             </button>
-
+            <button mat-icon-button color="warn" [disabled]="!checked().length" *ngIf="editing"
+            (click)="remove()">
+            <mat-icon>clear</mat-icon>
+        </button>
         </div>
-
         <button mat-icon-button color="warn" *ngIf="editing" (click)="deleteLayout()">
             <mat-icon>delete</mat-icon>
+        </button>
+
+        <button mat-icon-button color="primary" *ngIf="editing" (click)="help()">
+            <mat-icon>help_outline</mat-icon>
         </button>
     </div>
     <div class="panel">
@@ -50,10 +62,12 @@
             </div>
             <ng-container *ngIf="editing">
                 <div class="e zoom" (click)="selected=ic.control" [class.selected]="selected==ic.control">
-                    <mat-icon (touchstart)="zoom(ic.control,$event)">zoom_out_map</mat-icon>
+                    <mat-icon (touchstart)="zoom(ic.control,$event)" (mousedown)="zoom(ic.control,$event)">zoom_out_map
+                    </mat-icon>
                 </div>
                 <div class="e move">
-                    <mat-icon (touchstart)="move(ic.control,$event)">open_with</mat-icon>
+                    <mat-icon (touchstart)="move(ic.control,$event)" (mousedown)="move(ic.control,$event)">open_with
+                    </mat-icon>
                 </div>
                 <div class="e check">
                     <mat-checkbox [(ngModel)]="ic.checked"></mat-checkbox>

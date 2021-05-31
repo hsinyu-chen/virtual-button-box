@@ -7,6 +7,7 @@ import { ControlDefine, Panel } from 'src/app/control/control.component';
 import { Controls } from 'src/app/models/Controls';
 import { Layout } from 'src/app/models/Layout';
 import { App } from 'src/app/services/App';
+import { HelpComponent } from '../help/help.component';
 import { SelectControlPreviewComponent } from '../select-control-preview/select-control-preview.component';
 import { SelectControlComponent } from '../select-control/select-control.component';
 
@@ -42,29 +43,37 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   ow: number;
   oh: number;
   selected: Controls;
-  touchstart(e: TouchEvent) {
+  touchstart(e: TouchEvent | MouseEvent) {
     const b = (this.elementRef.nativeElement as HTMLElement).getBoundingClientRect();
     this.width = b.width;
     this.height = b.height;
     this.left = b.left;
     this.top = b.top;
-    this.start = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+    if (e instanceof TouchEvent) {
+      this.start = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+    } else {
+      this.start = { x: e.pageX, y: e.pageY };
+    }
   }
+  @HostListener('window:mouseup')
   @HostListener('touchend')
   touchend() {
     if (this.moving || this.zooming) {
       this.app.saveChanges();
+      this.zooming = undefined;
+      this.moving = undefined;
     }
-    this.zooming = undefined;
-    this.moving = undefined;
   }
   @HostListener('touchmove', ['$event'])
-  touchmove(e: TouchEvent) {
+  @HostListener('window:mousemove', ['$event'])
+  touchmove(e: TouchEvent | MouseEvent) {
     if (this.moving) {
+      const pageX = (e instanceof TouchEvent) ? e.touches[0].pageX : e.pageX;
+      const pageY = (e instanceof TouchEvent) ? e.touches[0].pageY : e.pageY;
       const hw = (this.moving.width / 2);
       const hh = (this.moving.height / 2);
-      let leftd = (((e.touches[0].pageX - this.left) / this.width) * 100) - hw;
-      let topd = (((e.touches[0].pageY - this.top) / this.height) * 100) - hh;
+      let leftd = (((pageX - this.left) / this.width) * 100) - hw;
+      let topd = (((pageY - this.top) / this.height) * 100) - hh;
       if (leftd < 0) {
         leftd = 0;
       }
@@ -80,8 +89,10 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
       this.moving.x = leftd;
       this.moving.y = topd;
     } else if (this.zooming) {
-      let w = ((e.touches[0].pageX - this.start.x) / this.width) * 100 + this.ow;
-      let h = ((e.touches[0].pageY - this.start.y) / this.height) * 100 + this.oh;
+      const pageX = (e instanceof TouchEvent) ? e.touches[0].pageX : e.pageX;
+      const pageY = (e instanceof TouchEvent) ? e.touches[0].pageY : e.pageY;
+      let w = ((pageX - this.start.x) / this.width) * 100 + this.ow;
+      let h = ((pageY - this.start.y) / this.height) * 100 + this.oh;
       if ((this.zooming.x + w) > 100) {
         w = 100 - this.zooming.x;
       }
@@ -103,19 +114,95 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   map: { [key: string]: ControlDefine };
   destory = new Subject();
   injectedControls: { injector: Injector, control: Controls, checked: boolean }[] = [];
+  wakeLock: any = null;
   constructor(private injector: Injector, private router: Router, private elementRef: ElementRef, public app: App, @Inject(ControlDefine) public controls: ControlDefine[], public route: ActivatedRoute, private dialog: MatDialog) {
+
+    this.map = {}
+    this.controls.forEach(x => this.map[x.name] = x);
     combineLatest([route.params, app.currentSettings]).pipe(takeUntil(this.destory)).subscribe(o => this.getLayout(o[0].id));
     route.params.subscribe(() => {
       this.editing = false;
-    })
-    this.map = {}
-    this.controls.forEach(x => this.map[x.name] = x);
+    });
+    this.destory.subscribe(() => {
+      if (this.wakeLock) {
+        this.wakeLock.release();
+      }
+    });
+    this.wakeLockRequest();
+
   }
+  @HostListener('window:click')
+  public wakeLockRequest() {
+    if (this.wakeLock) {
+      return;
+    }
+    if ('wakeLock' in navigator) {
+      ((navigator as any).wakeLock.request('screen') as Promise<any>).then((wakelock) => {
+        this.wakeLock = wakelock;
+        console.log('wakeLock screen');
+        wakelock.addEventListener('release', () => {
+          if (this.wakeLock === wakelock) {
+            this.wakeLock = undefined;
+          }
+        })
+      });
+    }
+  }
+
   checked() {
     return this.injectedControls.filter(x => x.checked);
   }
   clear() {
     this.injectedControls.forEach(x => x.checked = false);
+  }
+  remove() {
+    const targets = this.injectedControls.filter(x => x.checked);
+    if (targets.length) {
+      for (const t of targets) {
+        this.layout.controls.splice(this.layout.controls.findIndex(x => x === t.control), 1);
+      }
+      this.app.saveChanges()
+    }
+  }
+  evenH() {
+    const targets = this.injectedControls.filter(x => x.checked).map(x => x.control).sort((a, b) => a.y - b.y);
+    if (targets.length > 2) {
+      const last = targets[targets.length - 1];
+      const first = targets[0];
+      const top = first.y;
+      const bottom = last.y + last.height;
+      const totalSpace = targets.reduce((a, b) => a - b.height, bottom - top);
+      const oneSpace = totalSpace / (targets.length - 1);
+      let cur = top + first.height;
+      for (const c of targets) {
+        if (c !== first && c != last) {
+          cur += oneSpace;
+          c.y = cur;
+          cur += c.height;
+        }
+      }
+      this.app.saveChanges();
+    }
+  }
+  evenW() {
+    const targets = this.injectedControls.filter(x => x.checked).map(x => x.control).sort((a, b) => a.x - b.x);
+    if (targets.length > 2) {
+      const last = targets[targets.length - 1];
+      const first = targets[0];
+      const left = first.x;
+      const right = last.x + last.width;
+      const totalSpace = targets.reduce((a, b) => a - b.width, right - left);
+      const oneSpace = totalSpace / (targets.length - 1);
+      let cur = left + first.width;
+      for (const c of targets) {
+        if (c !== first && c != last) {
+          cur += oneSpace;
+          c.x = cur;
+          cur += c.width;
+        }
+      }
+      this.app.saveChanges();
+    }
   }
   align(type: 'x' | 'y') {
     if (this.selected) {
@@ -176,17 +263,21 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   }
   ngOnInit(): void {
   }
-  move(c: Controls, e: TouchEvent) {
-    this.touchstart(e);
-    this.moving = c;
-    this.zooming = undefined;
+  move(c: Controls, e: TouchEvent | MouseEvent) {
+    if (!this.moving) {
+      this.touchstart(e);
+      this.moving = c;
+      this.zooming = undefined;
+    }
   }
-  zoom(c: Controls, e: TouchEvent) {
-    this.touchstart(e);
-    this.ow = c.width;
-    this.oh = c.height;
-    this.zooming = c;
-    this.moving = undefined;
+  zoom(c: Controls, e: TouchEvent | MouseEvent) {
+    if (!this.zooming) {
+      this.touchstart(e);
+      this.ow = c.width;
+      this.oh = c.height;
+      this.zooming = c;
+      this.moving = undefined;
+    }
   }
   getInjector(c: Controls) {
     return Injector.create({
@@ -231,5 +322,8 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
         this.app.saveChanges();
       }
     });
+  }
+  help() {
+    this.dialog.open(HelpComponent, { height: '90vh' });
   }
 }

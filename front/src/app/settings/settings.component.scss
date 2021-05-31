@@ -36,6 +36,14 @@ h1 {
         margin: 0 10px;
     }
 }
+.list {
+    display: flex;
+    flex-direction: column;
+    > * {
+        flex-shrink: 0;
+        margin: 10px 5px;
+    }
+}
 .legend {
     display: flex;
     align-items: center;
@@ -58,9 +66,9 @@ h1 {
     box-shadow: var(--shadow);
     border-radius: 10px;
     overflow-x: hidden;
-    max-height: calc(100vh - 180px);
+    max-height: calc(100vh - 280px);
     @media screen and (orientation: portrait) {
-        max-height: calc(100vh - 300px);
+        max-height: calc(100vh - 400px);
     }
     .device {
         flex-shrink: 0;

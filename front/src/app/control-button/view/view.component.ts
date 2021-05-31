@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
-import { Component, forwardRef, HostBinding, HostListener, OnInit, Optional } from '@angular/core';
+import { Component, ElementRef, forwardRef, HostBinding, HostListener, OnInit, Optional } from '@angular/core';
 import { ControlComponentBase, Panel } from 'src/app/control/control.component';
+import { App } from 'src/app/services/App';
 import { ButtonSetting } from '../ButtonSetting';
 
 @Component({
@@ -16,15 +17,22 @@ import { ButtonSetting } from '../ButtonSetting';
 })
 export class ViewComponent extends ControlComponentBase implements OnInit {
   press = false;
-  @HostListener('touchstart')
-  start() {
-    this.press = true;
+  start(e: MouseEvent | TouchEvent) {
+    if (!this.press && e.target && (e.target as Element).tagName.toUpperCase() == 'RECT') {
+      this.press = true;
+      if (e.isTrusted && this.app.settings.enableVibrate) {
+        window.navigator.vibrate(10)
+      }
+    }
   }
+  @HostListener('window:mouseup')
   @HostListener('touchend')
   end() {
-    this.press = false;
+    if (this.press) {
+      this.press = false;
+    }
   }
-  constructor(private location: Location, @Optional() public setting: ButtonSetting, public panel: Panel) {
+  constructor(private location: Location, @Optional() public setting: ButtonSetting, public panel: Panel, public app: App) {
     super(panel);
     if (!this.setting) {
       this.setting = new ButtonSetting();
