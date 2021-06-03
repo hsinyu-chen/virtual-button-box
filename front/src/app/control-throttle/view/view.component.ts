@@ -39,11 +39,8 @@ export class ViewComponent extends ControlComponentBase implements OnInit, OnDes
     this.destory.complete();
   }
   async start(e: MouseEvent | TouchEvent) {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    this.isTouch = e instanceof TouchEvent;
     if (this.isTouch && e instanceof MouseEvent) return;
+    this.isTouch = e instanceof TouchEvent;
     this.trackId = e instanceof MouseEvent ? -1 : e.changedTouches[0].identifier;
     this.scY = e instanceof MouseEvent ? e.clientY : e.changedTouches[0].clientY;
     this.sY = this.rY;
@@ -52,7 +49,7 @@ export class ViewComponent extends ControlComponentBase implements OnInit, OnDes
   @HostListener('window:mousemove', ['$event'])
   @HostListener('window:touchmove', ['$event'])
   move(e: MouseEvent | TouchEvent) {
-    if (this.trackId === undefined || this.isTouch && e instanceof MouseEvent) return;
+    if (this.trackId === undefined || (this.isTouch && e instanceof MouseEvent)) return;
     let cy: number;
     if (e instanceof TouchEvent) {
       for (let i = 0; i < e.changedTouches.length; i++) {

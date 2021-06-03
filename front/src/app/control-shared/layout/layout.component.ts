@@ -339,10 +339,12 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
     this.dialog.open(SelectControlComponent, {
       width: '95vw',
       height: '95vh'
-    }).afterClosed().subscribe(x => {
+    }).afterClosed().subscribe((x: Controls) => {
       if (x) {
         x.width = 20;
         x.height = 20;
+        x.x = 10;
+        x.y = 10;
         this.layout.controls.push(x);
         this.app.saveChanges();
       }
