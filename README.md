@@ -12,7 +12,7 @@
 
 2. open browser at pc/phone with url http://<your.pc.local.ip>:9998 (eq: http://192.168.1.123:9998)
 
-3. tap "GEAR" icon to create / select which Vjoy device you want to use with virtual-button-box
+3. tap "GEAR" icon to create / select which Vjoy device you want to use with virtual-button-box, if your Vjoy is new installed , recreate first device is recommanded
 
 4. tap "Plus" icon to create new layout
 
