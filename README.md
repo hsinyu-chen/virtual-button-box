@@ -7,7 +7,7 @@
 
 ## How To Use
 
-1. click Hcs.VirtualButtonBox.exe to start hosting server ( right click on tray icon to exit)
+1. click Hcs.VirtualButtonBox.exe to start hosting server ( right click on tray icon to exit)，virtual-button-box need Admin privilege to communicate with Vjoy
 
 2. open browser at pc/phone with url http://<your.pc.local.ip>:9998 (eq: http://192.168.1.123:9998)
 
