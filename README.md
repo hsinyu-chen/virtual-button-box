@@ -1,4 +1,6 @@
 # virtual-button-box
+This is a VJoy Client with custom layout feature currently has button and throttle axis component.
+
 ## Installation Requirements
 
 1. Vjoy must Installed before use virtual-button-box
