@@ -16,7 +16,7 @@
 
 4. tap "Plus" icon to create new layout
 
-5. tap "Edit(pencil)" icon to edit you layout, question mark for explanation
+5. tap "Edit(pencil)" icon to edit you layout, question mark for further information
 
 ## Know Issues
 
