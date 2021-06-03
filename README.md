@@ -23,5 +23,5 @@
 
 2. control mutiple throttle at same time cause some bug
 
-[!image](https://i.imgur.com/xYwJnSs.jpg)
-[!image](https://i.imgur.com/3UuCBTE.png)
+![image](https://i.imgur.com/xYwJnSs.jpg)
+![image](https://i.imgur.com/3UuCBTE.png)
