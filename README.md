@@ -6,6 +6,7 @@
 2. clients(phone or tablet) need in same local network with your PC and can reach each others (default TCP port 9998)
 
 ## How To Use
+0. [get release from here](https://github.com/hsinyu-chen/virtual-button-box/releases)
 
 1. click Hcs.VirtualButtonBox.exe to start hosting server ( right click on tray icon to exit)，virtual-button-box need Admin privilege to communicate with Vjoy
 
