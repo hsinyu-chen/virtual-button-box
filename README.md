@@ -9,7 +9,7 @@ You can place components in layout and change position and size feedly
 
 1. Vjoy must Installed before use virtual-button-box
 
-2. clients(phone or tablet) need in same local network with your PC and can reach each others (default TCP port 9998)
+2. clients(phone or tablet) need in same local network with your PC and can reach each others (default TCP port 9998), you can change port and binding in appsettings.json
 
 ## How To Use
 0. [get release from here](https://github.com/hsinyu-chen/virtual-button-box/releases)
