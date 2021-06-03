@@ -22,8 +22,6 @@
 
 1. IOS device can't use fullscreen mode
 
-2. control mutiple throttle at same time cause some bug
-
 ![image](https://i.imgur.com/xYwJnSs.jpg)
 ![image](https://i.imgur.com/3UuCBTE.png)
 ![image](https://i.imgur.com/QKM9DRl.png)
