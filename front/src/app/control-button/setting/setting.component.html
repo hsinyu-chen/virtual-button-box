@@ -15,13 +15,15 @@
 <div class="row">
     <mat-form-field>
         <label>Text</label>
-        <input matInput [(ngModel)]="setting.text" inputmode="latin" type="tel" maxlength="4" />
+        <input matInput [(ngModel)]="setting.text" maxlength="4" />
     </mat-form-field>
     <mat-form-field>
         <label>Text 2</label>
-        <input matInput [(ngModel)]="setting.text2" inputmode="latin" type="tel" maxlength="4" />
+        <input matInput [(ngModel)]="setting.text2" maxlength="4" />
     </mat-form-field>
 </div>
 <div class="row">
-
+    <app-button-binding [(ngModel)]="setting.binding">
+        <span>press</span>
+    </app-button-binding>
 </div>

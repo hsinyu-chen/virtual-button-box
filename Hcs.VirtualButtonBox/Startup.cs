@@ -1,3 +1,4 @@
+using Hcs.VirtualButtonBox.Hubs;
 using Hcs.VirtualButtonBox.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,7 @@ namespace Hcs.VirtualButtonBox
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvcCore().AddNewtonsoftJson();
+            services.AddSignalR();
             services.AddSingleton<VJoyConfig>();
             services.AddSingleton<VJoyFeeder>();
             services.AddSingleton<ISettingStorage>(sp => new SettingStorage(Path.Combine(sp.GetService<IWebHostEnvironment>().ContentRootPath, "UserSettings")));
@@ -43,6 +45,7 @@ namespace Hcs.VirtualButtonBox
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<CommandHub>("/api/ws/command");
                 endpoints.MapFallbackToFile("/index.html");
             });
         }

@@ -5,15 +5,29 @@
     height: 100%;
     display: flex;
     flex-wrap: wrap;
-    .view {
-        width: 100px;
-        height: 100px;
+    button:not(.close) {
+        margin: 5px;
         position: relative;
+        ::before {
+            z-index: 2;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            content: "";
+        }
+    }
+    .view {
+        width: 200px;
+        height: 200px;
+        max-width: 200px;
+        max-height: 200px;
+        position: relative;
+        display: flex;
     }
     position: relative;
     .close {
         position: absolute;
         right: 0;
-        top:0;
+        top: 0;
     }
 }

@@ -12,6 +12,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { HelpComponent } from './help/help.component';
+import { HelpersModule } from '../helpers/helpers.module';
+import { ControlThrottleModule } from '../control-throttle/control-throttle.module';
 
 
 
@@ -31,12 +33,14 @@ import { HelpComponent } from './help/help.component';
     FormsModule,
     MatCheckboxModule,
     MatSelectModule,
+    HelpersModule,
     RouterModule.forChild([
       {
         path: ':id', component: LayoutComponent
       }
     ]),
-    ControlButtonModule.forRoot()
+    ControlButtonModule.forRoot(),
+    ControlThrottleModule.forRoot()
   ]
 })
 export class ControlSharedModule {

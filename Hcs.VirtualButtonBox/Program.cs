@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Hcs.VirtualButtonBox
 {
@@ -20,7 +21,23 @@ namespace Hcs.VirtualButtonBox
             {
                 return;
             }
-            CreateHostBuilder(args).Build().Run();
+            var icon = new NotifyIcon
+            {
+                Icon = new System.Drawing.Icon("./icon.ico"),
+                Visible = true
+            };
+            var host = CreateHostBuilder(args).Build();
+            icon.ContextMenuStrip = new();
+            icon.ContextMenuStrip.Items.Add("Exit", null, async (s, e) =>
+             {
+                 icon.Visible = false;
+                 icon.Dispose();
+                 host.Dispose();
+                 
+                 Application.Exit();
+             });
+            host.StartAsync();
+            Application.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

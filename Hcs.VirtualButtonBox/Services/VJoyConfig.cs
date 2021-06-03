@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using vJoy.Wrapper;
 
 namespace Hcs.VirtualButtonBox.Services
 {
@@ -12,7 +13,18 @@ namespace Hcs.VirtualButtonBox.Services
     {
         public int Buttons { get; set; }
         public int DescretePov { get; set; }
-        public string[] Axes { get; set; }
+        public Axis[] Axes { get; set; }
+        readonly static Dictionary<string, Axis> Map = new()
+        {
+            { "X", Axis.HID_USAGE_X },
+            { "Y", Axis.HID_USAGE_Y },
+            { "Z", Axis.HID_USAGE_Z },
+            { "Rx", Axis.HID_USAGE_RX },
+            { "Ry", Axis.HID_USAGE_RY },
+            { "Rz", Axis.HID_USAGE_RZ },
+            { "Sl0", Axis.HID_USAGE_SL0 },
+            { "Sl1", Axis.HID_USAGE_SL1 }
+        };
         public VJoyDeviceDetailInfo(Dictionary<string, string> properies) : base()
         {
             if (properies.TryGetValue("Buttons", out string val))
@@ -31,7 +43,7 @@ namespace Hcs.VirtualButtonBox.Services
             }
             if (properies.TryGetValue("Axes", out string a))
             {
-                Axes = a.Split(' ').Select(x => x.Trim()).ToArray();
+                Axes = a.Split(' ').Select(x => x.Trim()).Where(x => Map.ContainsKey(x)).Select(x => Map[x]).ToArray();
             }
             if (properies.TryGetValue("Device", out string id))
             {

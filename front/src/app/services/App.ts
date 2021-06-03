@@ -4,7 +4,7 @@ import { Settings } from "./Settings";
 import { debounceTime } from 'rxjs/operators';
 import { Layout } from "../models/Layout";
 export class AppSettings {
-    oledProtect = true;
+    oledProtect = false;
     layouts: Layout[] = []
     enableVibrate = true;
 }
@@ -16,8 +16,10 @@ export class App {
     currentSettings = new BehaviorSubject<AppSettings>(null);
     constructor(private s: Settings) {
         s.getAsync<AppSettings>('app').then(v => {
-            for (const k of Object.keys(this.settings)) {
-                this.settings[k] = v[k] === undefined ? this.settings[k] : v[k];
+            if (v) {
+                for (const k of Object.keys(this.settings)) {
+                    this.settings[k] = v[k] === undefined ? this.settings[k] : v[k];
+                }
             }
             this.makeNotifyChange();
             this.currentSettings.next(this.settings);

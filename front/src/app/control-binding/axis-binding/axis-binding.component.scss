@@ -1,0 +1,20 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    > * {
+        flex-shrink: 0;
+    }
+    .binding {
+        display: flex;
+        flex-wrap: wrap;
+        mat-form-field {
+            margin: 0 5px;
+            width: 90px;
+        }
+    }
+    h2 {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+}

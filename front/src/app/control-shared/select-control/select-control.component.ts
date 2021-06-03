@@ -27,8 +27,8 @@ export class SelectControlComponent implements OnInit {
   }
   openSetting(def: ControlDefine) {
     this.dialog.open(SelectControlPreviewComponent, {
-      width: '80vw',
-      height: '80vh',
+      width: '95vw',
+      height: '95vh',
       data: {
         def: def,
         setting: new def.settingType(),

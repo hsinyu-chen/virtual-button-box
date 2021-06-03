@@ -4,15 +4,21 @@
     flex: 1 1 auto;
     position: relative;
     @mixin color() {
-        filter: url(#neon-primary);
         stroke: var(--primary);
         &[color="accent"] {
-            filter: url(#neon-accent);
             stroke: var(--accent);
         }
         &[color="warn"] {
-            filter: url(#neon-warn);
             stroke: var(--warn);
+        }
+    }
+    @mixin filter() {
+        filter: url(#neon-primary);
+        &[color="accent"] {
+            filter: url(#neon-accent);
+        }
+        &[color="warn"] {
+            filter: url(#neon-warn);
         }
     }
     @mixin fill() {
@@ -28,42 +34,42 @@
         pointer-events: visibleFill;
         flex: 1 1 auto;
         .border {
-            stroke-width: 8;
+            stroke-width: 20;
             fill: transparent;
+            opacity: 0.7;
+            @include filter();
             @include color();
+            transition: all 20ms linear;
             &.press {
-                stroke-width: 6;
+                stroke-width: 15;
+                opacity: 0.5;
                 filter: none;
-                opacity: 0.7;
             }
         }
         .cap {
-            fill: var(--primary01);
-            &[color="accent"] {
-                fill: var(--accent01);
-            }
+            opacity: 0.7;
+            transition: all 20ms linear;
+            fill: url("#grad-primary");
             &[color="warn"] {
-                fill: var(--warn01);
+                fill: url("#grad-warn");
+            }
+            &[color="accent"] {
+                fill: url("#grad-accent");
             }
             &.press {
-                fill: var(--primary005);
-                &[color="accent"] {
-                    fill: var(--accent005);
-                }
-                &[color="warn"] {
-                    fill: var(--warn005);
-                }
+                opacity: 0.3;
             }
         }
         text {
-            stroke-width: 5;
+            stroke-width: 12;
+            opacity: 0.9;
             @include color();
             @include fill();
+            @include filter();
+            transition: all 20ms linear;
             &.press {
-                filter: none;
-                stroke-width: 2;
-                
-                opacity: 0.7;
+                stroke-width: 6;
+                opacity: 1;
             }
         }
     }

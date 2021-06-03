@@ -3,14 +3,26 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { VjoyService } from 'src/app/control-binding/vjoy';
 import { ControlDefine, Panel } from 'src/app/control/control.component';
+import { Confirm } from 'src/app/helpers/confirm.service';
 import { Controls } from 'src/app/models/Controls';
 import { Layout } from 'src/app/models/Layout';
 import { App } from 'src/app/services/App';
 import { HelpComponent } from '../help/help.component';
 import { SelectControlPreviewComponent } from '../select-control-preview/select-control-preview.component';
 import { SelectControlComponent } from '../select-control/select-control.component';
-
+type InactiveData = {
+  start?: { x: number, y: number };
+  width?: number;
+  height?: number;
+  left?: number;
+  top?: number;
+  moving?: Controls;
+  zooming?: Controls;
+  ow?: number;
+  oh?: number;
+};
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -33,81 +45,99 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
     'looks_5',
     'looks_6'
   ]
-  start: { x: number, y: number };
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-  moving: Controls;
-  zooming: Controls;
-  ow: number;
-  oh: number;
+  inactivating: {
+    [id: number]: InactiveData
+  } = {};
+
+
   selected: Controls;
-  touchstart(e: TouchEvent | MouseEvent) {
-    const b = (this.elementRef.nativeElement as HTMLElement).getBoundingClientRect();
-    this.width = b.width;
-    this.height = b.height;
-    this.left = b.left;
-    this.top = b.top;
-    if (e instanceof TouchEvent) {
-      this.start = { x: e.touches[0].pageX, y: e.touches[0].pageY };
+  touchstart(e: TouchEvent | MouseEvent, clientX: number, clientY: number, id: number) {
+    const data = this.inactivating[id];
+    if (data) {
+      const b = (this.elementRef.nativeElement as HTMLElement).getBoundingClientRect();
+      data.width = b.width;
+      data.height = b.height;
+      data.left = b.left;
+      data.top = b.top;
+      data.start = { x: clientX, y: clientY };
+    }
+  }
+  private getData(id: number) {
+    if (!this.inactivating[id]) {
+      this.inactivating[id] = {};
+    }
+    return this.inactivating[id];
+  }
+
+  @HostListener('window:mouseup', ['$event'])
+  @HostListener('window:touchend', ['$event'])
+  touchend(e: TouchEvent) {
+    if (!this.editing) return;
+    this.multiTouch(e, (data, clientX, clientY, id, ev) => {
+      if (data.moving || data.zooming) {
+        ev.preventDefault();
+        this.app.saveChanges();
+        data.zooming = undefined;
+        data.moving = undefined;
+        delete this.inactivating[id];
+      }
+    });
+  }
+  multiTouch(e: TouchEvent | MouseEvent, action: (data: InactiveData, clientX: number, clientY: number, id: number, e: TouchEvent | MouseEvent) => void) {
+    if (e instanceof MouseEvent) {
+      action(this.getData(-1), e.clientX, e.clientY, -1, e);
     } else {
-      this.start = { x: e.pageX, y: e.pageY };
+      for (let i = 0, c = e.changedTouches.length; i < c; i++) {
+        const touch = e.changedTouches.item(i);
+        action(this.getData(touch.identifier), touch.clientX, touch.clientY, touch.identifier, e);
+      }
     }
   }
-  @HostListener('window:mouseup')
-  @HostListener('touchend')
-  touchend() {
-    if (this.moving || this.zooming) {
-      this.app.saveChanges();
-      this.zooming = undefined;
-      this.moving = undefined;
-    }
-  }
-  @HostListener('touchmove', ['$event'])
+  @HostListener('window:touchmove', ['$event'])
   @HostListener('window:mousemove', ['$event'])
   touchmove(e: TouchEvent | MouseEvent) {
-    if (this.moving) {
-      const pageX = (e instanceof TouchEvent) ? e.touches[0].pageX : e.pageX;
-      const pageY = (e instanceof TouchEvent) ? e.touches[0].pageY : e.pageY;
-      const hw = (this.moving.width / 2);
-      const hh = (this.moving.height / 2);
-      let leftd = (((pageX - this.left) / this.width) * 100) - hw;
-      let topd = (((pageY - this.top) / this.height) * 100) - hh;
-      if (leftd < 0) {
-        leftd = 0;
+    if (!this.editing) return;
+    this.multiTouch(e, (data, clientX, clientY, id, ev) => {
+      if (data.moving) {
+        ev.preventDefault();
+        const hw = (data.moving.width / 2);
+        const hh = (data.moving.height / 2);
+        let leftd = (((clientX - data.left) / data.width) * 100) - hw;
+        let topd = (((clientY - data.top) / data.height) * 100) - hh;
+        if (leftd < 0) {
+          leftd = 0;
+        }
+        if (topd < 0) {
+          topd = 0;
+        }
+        if (topd > (100 - hh - hh)) {
+          topd = (100 - hh - hh);
+        }
+        if (leftd > (100 - hw - hw)) {
+          leftd = (100 - hw - hw);
+        }
+        data.moving.x = leftd;
+        data.moving.y = topd;
+      } else if (data.zooming) {
+        ev.preventDefault();
+        let w = ((clientX - data.start.x) / data.width) * 100 + data.ow;
+        let h = ((clientY - data.start.y) / data.height) * 100 + data.oh;
+        if ((data.zooming.x + w) > 100) {
+          w = 100 - data.zooming.x;
+        }
+        if (w < 10) {
+          w = 10;
+        }
+        if ((data.zooming.y + h) > 100) {
+          h = 100 - data.zooming.y;
+        }
+        if (h < 10) {
+          h = 10;
+        }
+        data.zooming.width = w;
+        data.zooming.height = h;
       }
-      if (topd < 0) {
-        topd = 0;
-      }
-      if (topd > (100 - hh - hh)) {
-        topd = (100 - hh - hh);
-      }
-      if (leftd > (100 - hw - hw)) {
-        leftd = (100 - hw - hw);
-      }
-      this.moving.x = leftd;
-      this.moving.y = topd;
-    } else if (this.zooming) {
-      const pageX = (e instanceof TouchEvent) ? e.touches[0].pageX : e.pageX;
-      const pageY = (e instanceof TouchEvent) ? e.touches[0].pageY : e.pageY;
-      let w = ((pageX - this.start.x) / this.width) * 100 + this.ow;
-      let h = ((pageY - this.start.y) / this.height) * 100 + this.oh;
-      if ((this.zooming.x + w) > 100) {
-        w = 100 - this.zooming.x;
-      }
-      if (w < 10) {
-        w = 10;
-      }
-      if ((this.zooming.y + h) > 100) {
-        h = 100 - this.zooming.y;
-      }
-      if (h < 10) {
-        h = 10;
-      }
-      this.zooming.width = w;
-      this.zooming.height = h;
-    }
+    });
   }
   layout: Layout;
   editing = false;
@@ -115,8 +145,8 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   destory = new Subject();
   injectedControls: { injector: Injector, control: Controls, checked: boolean }[] = [];
   wakeLock: any = null;
-  constructor(private injector: Injector, private router: Router, private elementRef: ElementRef, public app: App, @Inject(ControlDefine) public controls: ControlDefine[], public route: ActivatedRoute, private dialog: MatDialog) {
-
+  constructor(private voj: VjoyService, private injector: Injector, private confirm: Confirm, private router: Router, private elementRef: ElementRef, public app: App, @Inject(ControlDefine) public controls: ControlDefine[], public route: ActivatedRoute, private dialog: MatDialog) {
+    this.voj.update()
     this.map = {}
     this.controls.forEach(x => this.map[x.name] = x);
     combineLatest([route.params, app.currentSettings]).pipe(takeUntil(this.destory)).subscribe(o => this.getLayout(o[0].id));
@@ -131,6 +161,7 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
     this.wakeLockRequest();
 
   }
+
   @HostListener('window:click')
   public wakeLockRequest() {
     if (this.wakeLock) {
@@ -226,15 +257,18 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
     }
   }
   deleteLayout() {
-    if (confirm('confirm delete?')) {
-      this.app.settings.layouts = this.app.settings.layouts.filter(x => x !== this.layout);
-      const next = this.app.settings.layouts[0];
-      if (next) {
-        this.router.navigate(['/layout', next.id]);
-      } else {
-        this.router.navigate(['/']);
+    this.confirm.open('confirm delete?').then(ok => {
+      if (ok) {
+        this.app.settings.layouts = this.app.settings.layouts.filter(x => x !== this.layout);
+        const next = this.app.settings.layouts[0];
+        if (next) {
+          this.router.navigate(['/layout', next.id]);
+        } else {
+          this.router.navigate(['/']);
+        }
       }
-    }
+    })
+
   }
   ngOnDestroy() {
     this.destory.next();
@@ -264,20 +298,27 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   ngOnInit(): void {
   }
   move(c: Controls, e: TouchEvent | MouseEvent) {
-    if (!this.moving) {
-      this.touchstart(e);
-      this.moving = c;
-      this.zooming = undefined;
-    }
+    this.multiTouch(e, (data, x, y, id, ev) => {
+      if (!data.moving) {
+        ev.preventDefault();
+        this.touchstart(e, x, y, id);
+        data.moving = c;
+        data.zooming = undefined;
+      }
+    });
+
   }
   zoom(c: Controls, e: TouchEvent | MouseEvent) {
-    if (!this.zooming) {
-      this.touchstart(e);
-      this.ow = c.width;
-      this.oh = c.height;
-      this.zooming = c;
-      this.moving = undefined;
-    }
+    this.multiTouch(e, (data, x, y, id, ev) => {
+      if (!data.zooming) {
+        ev.preventDefault();
+        this.touchstart(e, x, y, id);
+        data.ow = c.width;
+        data.oh = c.height;
+        data.zooming = c;
+        data.moving = undefined;
+      }
+    });
   }
   getInjector(c: Controls) {
     return Injector.create({
@@ -296,8 +337,8 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   }
   add() {
     this.dialog.open(SelectControlComponent, {
-      width: '80vw',
-      height: '80vh'
+      width: '95vw',
+      height: '95vh'
     }).afterClosed().subscribe(x => {
       if (x) {
         x.width = 20;
@@ -309,8 +350,8 @@ export class LayoutComponent implements OnInit, OnDestroy, Panel {
   }
   openSetting(c: Controls) {
     this.dialog.open(SelectControlPreviewComponent, {
-      width: '80vw',
-      height: '80vh',
+      width: '95vw',
+      height: '95vh',
       data: {
         def: this.map[c.type],
         setting: JSON.parse(JSON.stringify(c.setting)),

@@ -40,10 +40,9 @@
                 (click)="clear()">
                 <mat-icon>remove_done</mat-icon>
             </button>
-            <button mat-icon-button color="warn" [disabled]="!checked().length" *ngIf="editing"
-            (click)="remove()">
-            <mat-icon>clear</mat-icon>
-        </button>
+            <button mat-icon-button color="warn" [disabled]="!checked().length" *ngIf="editing" (click)="remove()">
+                <mat-icon>clear</mat-icon>
+            </button>
         </div>
         <button mat-icon-button color="warn" *ngIf="editing" (click)="deleteLayout()">
             <mat-icon>delete</mat-icon>
@@ -61,7 +60,8 @@
                 </ng-container>
             </div>
             <ng-container *ngIf="editing">
-                <div class="e zoom" (click)="selected=ic.control" [class.selected]="selected==ic.control">
+                <div class="e zoom" (touchstart)="selected=ic.control" (mousedown)="selected=ic.control"
+                    [class.selected]="selected==ic.control">
                     <mat-icon (touchstart)="zoom(ic.control,$event)" (mousedown)="zoom(ic.control,$event)">zoom_out_map
                     </mat-icon>
                 </div>

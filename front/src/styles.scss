@@ -60,12 +60,13 @@ $app-color: rgb(180, 180, 180);
         background: rgba($app-primary-color, 0.7);
     }
     box-sizing: border-box;
+    font-family: 'Share Tech Mono';
 }
 body,
 html {
     padding: 0;
     margin: 0;
-    font-family: "consolas";
+    font-family: "Share Tech Mono";
     font-size: 13px;
     color: $app-color;
 }

@@ -5,3 +5,4 @@ export class Layout {
     icon: string = 'sports_esports';
     controls: Controls[] = [];
 }
+

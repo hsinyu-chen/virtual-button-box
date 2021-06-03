@@ -1,0 +1,67 @@
+<svg viewBox="0 0 200 1000">
+    <defs>
+        <filter id="neon-primary">
+            <feFlood flood-color="#64dd17" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="neon-accent">
+            <feFlood flood-color="#ff9100" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+        <filter id="neon-warn">
+            <feFlood flood-color="#f44336" flood-opacity="0.2" in="SourceGraphic" />
+            <feComposite operator="in" in2="SourceGraphic" />
+            <feGaussianBlur stdDeviation="3" />
+            <feComponentTransfer result="glow1">
+                <feFuncA type="linear" slope="4" intercept="0" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode in="glow1" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+    <g>
+        <line [attr.color]="setting.color" class="color l vl vl-h" x1="70" x2="70" y1="100" y2="900"></line>
+        <line [attr.color]="setting.color" class="color vl" x1="130" x2="130" y1="100" y2="900"></line>
+        <ng-container *ngFor="let l of lines">
+            <line [attr.color]="setting.color" class="color l hl" [attr.x1]="l.lx" x2="80" [attr.y1]="l.y"
+                [attr.y2]="l.y"></line>
+            <line [attr.color]="setting.color" class="color l hl" x1="120" [attr.x2]="l.rx" [attr.y1]="l.y"
+                [attr.y2]="l.y"></line>
+        </ng-container>
+        <text class="r" [attr.color]="setting.color" x="20" y="500" rotate="180deg" alignment-baseline="middle" letter-spacing="20"
+            font-size="50" text-anchor="middle">{{setting.text}}</text>
+        <g [attr.transform]="'translate(0 '+(-rY)+')'">
+            <text class="value" [attr.color]="setting.color" font-size="20" alignment-baseline="middle" x="83"
+                y="900">{{value.toFixed().padStart(3,'0')}}</text>
+            <polygon [attr.transform]="'translate('+(-pOffset)+' 0)'" class="color p" [attr.color]="setting.color"
+                points="66,900 50,890 50,910"></polygon>
+            <polygon [attr.transform]="'translate('+(pOffset)+' 0)'" class="color p" [attr.color]="setting.color"
+                points="134,900 150,890 150,910"></polygon>
+
+            <rect [attr.color]="setting.color" class="color" rx="5" x="81" y="875" width="38" height="50"></rect>
+        </g>
+        <rect class="touch-ctrl" fill="transparent" x="50" width="100" height="1000" (touchstart)="start($event)"
+            (mousedown)="start($event)">
+
+        </rect>
+    </g>
+
+</svg>

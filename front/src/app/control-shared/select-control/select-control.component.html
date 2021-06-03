@@ -1,7 +1,8 @@
-<div class="view" *ngFor="let c of controls" (click)="openSetting(c)">
-    <ng-container *ngComponentOutlet="c.componentType;injector:injector"></ng-container>
-</div>
-
+<button mat-stroked-button *ngFor="let c of controls" (click)="openSetting(c)">
+    <div class="view">
+        <ng-container *ngComponentOutlet="c.componentType;injector:injector"></ng-container>
+    </div>
+</button>
 <button mat-icon-button color="warn" class="close" mat-dialog-close>
     <mat-icon>close</mat-icon>
 </button>

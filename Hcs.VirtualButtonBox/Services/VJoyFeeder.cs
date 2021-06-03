@@ -19,11 +19,25 @@ namespace Hcs.VirtualButtonBox.Services
         {
             this.setting = setting;
         }
-       
+        public async Task Use(int id, Action<VirtualJoystick> use)
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                if (joysticks.TryGetValue(id, out VirtualJoystick s))
+                {
+                    use(s);
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
         public async Task ClaimJoysAsync()
         {
             var basic = await setting.GetAsync<DeviceSettings>("device");
-            var selected = basic.UseDevices ?? Array.Empty<int>();
+            var selected = (basic.UseDevices ?? Array.Empty<int>()).Distinct().ToArray();
             var removeIds = joysticks.Keys.Where(x => !selected.Contains(x)).ToArray();
             foreach (var j in removeIds)
             {
@@ -58,6 +72,17 @@ namespace Hcs.VirtualButtonBox.Services
                     try
                     {
                         j.Aquire();
+                        j.SetJoystickHat(-1, Hats.Hat);
+                        j.SetJoystickHat(-1, Hats.HatExt1);
+                        j.SetJoystickHat(-1, Hats.HatExt2);
+                        j.SetJoystickHat(-1, Hats.HatExt3);
+                        j.SetJoystickAxis(0x4000, Axis.HID_USAGE_X);
+                        j.SetJoystickAxis(0x4000, Axis.HID_USAGE_Y);
+                        j.SetJoystickAxis(0x4000, Axis.HID_USAGE_Z);
+                        for (uint i = 1; i < 32; i++)
+                        {
+                            j.SetJoystickButton(false, i);
+                        }
                     }
                     catch (Exception ex)
                     {

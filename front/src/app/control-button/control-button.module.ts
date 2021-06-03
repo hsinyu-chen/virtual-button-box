@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { ButtonSetting } from './ButtonSetting';
+import { ControlBindingModule } from '../control-binding/control-binding.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { ButtonSetting } from './ButtonSetting';
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
-    MatRadioModule
+    MatRadioModule,
+    ControlBindingModule
   ]
 })
 export class ControlButtonModule {

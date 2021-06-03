@@ -34,7 +34,7 @@ namespace Hcs.VirtualButtonBox.Controllers
             }
             var basic = await settings.GetAsync<DeviceSettings>("device");
             var data = await vJoyConfig.GetDeviceInfoAsync();
-            var used = basic.UseDevices ?? Array.Empty<int>();
+            var used = (basic.UseDevices ?? Array.Empty<int>()).Distinct().ToArray();
             foreach (var d in data)
             {
                 d.Used = used.Contains(d.Id);
@@ -57,6 +57,16 @@ namespace Hcs.VirtualButtonBox.Controllers
             await vJoyConfig.CreateDeviceAsync(id);
             await feeder.ClaimJoysAsync();
             return await GetAsync();
+        }
+        [HttpPost("hw/claim")]
+        public async ValueTask<IActionResult> ClaimAsync()
+        {
+            if (!vJoyConfig.Installed)
+            {
+                return NotInstalled();
+            }
+            await feeder.ClaimJoysAsync();
+            return Ok();
         }
         [HttpDelete("hw/{id:int}")]
         public async ValueTask<IActionResult> HwDeleteAsync(int id)

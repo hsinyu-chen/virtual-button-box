@@ -1,0 +1,19 @@
+<h2><span>button binding</span><span>[<ng-content></ng-content>]</span></h2>
+<div class="binding">
+    <mat-form-field>
+        <mat-label>Device</mat-label>
+        <mat-select [(ngModel)]="value.deviceId" (ngModelChange)="valueChanged()" (opened)="t()">
+            <mat-option></mat-option>
+            <mat-option *ngFor="let d of vjoy.vjoyInfo?.details" [value]="d.id">{{d.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Button</mat-label>
+        <mat-select [(ngModel)]="value.buttonId" (ngModelChange)="valueChanged()" (opened)="t()"
+            [disabled]="!value.deviceId">
+            <mat-option></mat-option>
+            <mat-option *ngFor="let b of vjoy.vjoyInfo?.map[value.deviceId]?.buttonList" [value]="b">Button {{b}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
